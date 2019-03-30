@@ -1,0 +1,35 @@
+{
+    "params":{
+      "dev":true
+    },
+    "vis":{
+      "type":"barchart",
+      "title":"Barchart"
+    },
+    "style": {
+      "font": "DecimaMonoProBold",
+      "fontLables": "Arial",
+      "color": {
+        "main": "#71609B",
+        "second": "#D8D8D8",
+        "background": "#fff"
+      }
+    },
+    "data":{
+      "columns":["Text","Wert"],
+      "types":["string","int"],
+      "data":
+        [
+          {"label":"A","data":[1]},
+          {"label":"B","data":[2]},
+          {"label":"C","data":[3]}
+        ]
+      ,
+      "labels":[null],
+      "title": "Title here",
+      "subTitle": "some sub title",
+      "attribution": "created with svift",
+      "source": "source: svift team",
+      "format":"single-set"
+    }
+  }

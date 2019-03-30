@@ -1,1 +1,2 @@
-# vis-bar-module
+# Barchart
+## SVIFT.vis.barchart
