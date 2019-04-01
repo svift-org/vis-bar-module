@@ -14,7 +14,7 @@ SVIFT.vis.barchart = (function (data, container) {
 
   module.setup = function () {
 
-    module.d3config.barsContainer = module.vizContainer.append('g').selectAll("g")
+    module.d3config.barsContainer = module.vizContainer.append('g').attr('class', 'bars-container').selectAll("g")
       .data(data.data.data)
       .enter().append("g");
 
@@ -69,14 +69,18 @@ SVIFT.vis.barchart = (function (data, container) {
     // console.log(module.d3config.y.range(1))
     module.d3config.x.range([width,0]);
 
-    module.d3config.barsContainer 
-      .attr('transform','translate(0,'+module.d3config.y(0)+')');
+    d3.select('.bars-container')
+      .attr('transform','translate(0,'+ (module.d3config.y(0) + 7.5 )+')');
 
 
     module.d3config.bars
       .attr('y', function(d,i){return module.d3config.y(i) })
       .attr("height", module.d3config.y.bandwidth())
       .attr("opacity", 0);
+
+    // module.vizContainer.append('rect')
+    //   .attr('width', module.vizSize.width)
+    //   .attr('height', module.vizSize.height)
 
 
     // module.d3config.barsText
