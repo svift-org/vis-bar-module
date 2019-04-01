@@ -3,10 +3,8 @@ SVIFT.vis.barchart = (function (data, container) {
   var module = SVIFT.vis.base(data, container);
  
   module.d3config = {
-    ease:d3.easeQuadOut, 
-    yInterpolate:[], 
-    hInterpolate:[],
-    oInterpolate:[],
+    ease:d3.easeBounceOut, 
+    xInterpolate:[],
     steps:data.data.data.length,
     animation:{
       duration: 3000,
@@ -23,7 +21,7 @@ SVIFT.vis.barchart = (function (data, container) {
     module.d3config.bars = module.d3config.barsContainer.append('rect')
       .style('stroke','transparent')
       .attr('class', 'visFill')
-      .style('opacity',1);
+      .style('opacity',0);
 
     module.d3config.barsText = module.d3config.barsContainer.append("text")
       .text(function(d) { return d.label })
@@ -63,38 +61,41 @@ SVIFT.vis.barchart = (function (data, container) {
     var textPadding = 60;
     var vizTranslate = barsNumberHeigth + textPadding;
 
-    module.d3config.barsContainer 
-      .attr('transform','translate(0,0)');
 
     var windowHeight = module.vizSize.height;
     var width = module.vizSize.width; //-vizTranslate;
 
     module.d3config.y.range([0,windowHeight]);
+    // console.log(module.d3config.y.range(1))
     module.d3config.x.range([width,0]);
 
+    module.d3config.barsContainer 
+      .attr('transform','translate(0,'+module.d3config.y(0)+')');
+
+
     module.d3config.bars
-      .attr('y', function(d,i){ return module.d3config.y(i) })
+      .attr('y', function(d,i){return module.d3config.y(i) })
       .attr("height", module.d3config.y.bandwidth())
       .attr("opacity", 0);
 
 
-    module.d3config.barsText
-      .attr("x", function(d,i){ return module.d3config.x(i) + (module.d3config.y.bandwidth() / 2) })
-      .attr("y",function(d){ return this.getBBox().height + width + textPadding})
-      .attr("font-size", "1em")
-      // .attr("opacity", 0);
+    // module.d3config.barsText
+    //   .attr("x", function(d,i){ return module.d3config.x(i) + (module.d3config.y.bandwidth() / 2) })
+    //   .attr("y",function(d){ return this.getBBox().height + width + textPadding})
+    //   .attr("font-size", "1em")
+    //   // .attr("opacity", 0);
 
-    module.d3config.barsNumber
-      .attr("x", function(d,i){ return module.d3config.x(i) + (module.d3config.y.bandwidth() / 2) })
-      .attr("y", function(d){ return module.d3config.y(d.data[0]) - textPadding }) 
-      .attr("font-size", "1em")
-      // .attr("opacity", 0);
+    // module.d3config.barsNumber
+    //   .attr("x", function(d,i){ return module.d3config.x(i) + (module.d3config.y.bandwidth() / 2) })
+    //   .attr("y", function(d){ return module.d3config.y(d.data[0]) - textPadding }) 
+    //   .attr("font-size", "1em")
+    //   // .attr("opacity", 0);
 
 
     data.data.data.forEach(function(d,i){
-      module.d3config.yInterpolate[i] = d3.interpolate(width, module.d3config.x(d.data[0]));
-      module.d3config.hInterpolate[i] = d3.interpolate(0, width-module.d3config.x(d.data[0]));
-      module.d3config.oInterpolate[i] = d3.interpolate(0, 1);
+      // module.d3config.yInterpolate[i] = d3.interpolate(width, module.d3config.x(d.data[0]));
+      module.d3config.xInterpolate[i] = d3.interpolate(0, width-module.d3config.x(d.data[0]));
+      // module.d3config.oInterpolate[i] = d3.interpolate(0, 1);
     });
 
     if(module.playHead == module.playTime){
@@ -113,13 +114,14 @@ SVIFT.vis.barchart = (function (data, container) {
     // module.d3config.count
     //   .text(interpolation)
     //   .attr("opacity",1);
+    module.d3config.bars.style('opacity', 1 );
 
     for (var i = 0; i < module.d3config.steps; i++) {
 
+
       d3.select(module.d3config.bars._groups[0][i])
         // .attr('y',      function(){ return module.d3config.yInterpolate[index](module.d3config.ease(t)); })
-        .attr('width', function(){ return module.d3config.hInterpolate[i](module.d3config.ease(t)); })
-        .attr('opacity', function(){ return module.d3config.oInterpolate[i](module.d3config.ease(t)); });
+        .attr('width', function(){ return module.d3config.xInterpolate[i](module.d3config.ease(t)); })
 
     }
 
@@ -128,22 +130,6 @@ SVIFT.vis.barchart = (function (data, container) {
   module.timeline = {
     bars: {start:0, end:3000, func:module.barAnimation}
   };
-
-
-
-
-  // //One bar animation
-  // var barAnimation = function(t){  
-
-  //     d3.select(module.d3config.bars)
-  //       // .attr('y',      function(){ return module.d3config.yInterpolate[index](module.d3config.ease(t)); })
-  //       .attr('width', function(){ return module.d3config.hInterpolate[t](module.d3config.ease(t)); })
-  //       .attr('opacity', function(){ return module.d3config.oInterpolate[t](module.d3config.ease(t)); });
-
-
-  // };
-
-
 
   return module;
 
