@@ -62,7 +62,7 @@ SVIFT.vis.barchart = (function (data, container) {
     var vizTranslate = barsNumberHeigth + textPadding;
 
 
-    var windowHeight = module.vizSize.height;
+    var windowHeight = module.vizSize.height + 15;
     var width = module.vizSize.width; //-vizTranslate;
 
     module.d3config.y.range([0,windowHeight]);
@@ -70,7 +70,7 @@ SVIFT.vis.barchart = (function (data, container) {
     module.d3config.x.range([width,0]);
 
     d3.select('.bars-container')
-      .attr('transform','translate(0,'+ (module.d3config.y(0) + 7.5 )+')');
+      .attr('transform','translate(0,'+ (module.d3config.y(0))+')');
 
 
     module.d3config.bars
