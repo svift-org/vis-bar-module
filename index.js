@@ -69,8 +69,8 @@ SVIFT.vis.barchart = (function (data, container) {
     // console.log(module.d3config.y.range(1))
     module.d3config.x.range([width,0]);
 
-    d3.select('.bars-container')
-      .attr('transform','translate(0,'+ (module.d3config.y(0) + 15)+')');
+    module.d3config.barsContainer
+      .attr('transform','translate(0,'+ (module.d3config.y(0))+')');
 
 
     module.d3config.bars
