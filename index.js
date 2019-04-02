@@ -6,15 +6,15 @@ SVIFT.vis.barchart = (function (data, container) {
     ease:d3.easeBounceOut, 
     xInterpolate:[],
     steps:data.data.data.length,
-    animation:{
-      duration: 3000,
-      barPartPercent: .8
-    }
+    // animation:{
+    //   duration: 3000,
+    //   barPartPercent: .8
+    // }
   };
 
   module.setup = function () {
 
-    module.d3config.barsContainer = module.vizContainer.append('g').attr('class', 'bars-container').selectAll("g")
+    module.d3config.barsContainer = module.vizContainer.selectAll("g")
       .data(data.data.data)
       .enter().append("g");
 
@@ -26,8 +26,7 @@ SVIFT.vis.barchart = (function (data, container) {
     module.d3config.barsText = module.d3config.barsContainer.append("text")
       .text(function(d) { return d.label })
       .attr('class', 'labelText') //bold
-      .attr("text-anchor", "middle")
-      .style('opacity',0);
+      .style('opacity',1);
 
     module.d3config.barsNumber = module.d3config.barsContainer.append("text")
       .text(function(d) { return d.data[0] })
@@ -37,7 +36,8 @@ SVIFT.vis.barchart = (function (data, container) {
 
 
     module.timeline = {
-      bars: {start:0, end:3000, func:module.barAnimation}
+      bars: {start:0, end:2500, func:module.barAnimation},
+      text: {start:2500, end:3000, func:module.textAnimation},
     };
 
 
@@ -53,8 +53,9 @@ SVIFT.vis.barchart = (function (data, container) {
 
   module.resize = function () {
 
+    var maxValue = d3.max(data.data.data, function(d){return d.data[0];})
     module.d3config.y = d3.scaleBand().padding(0.1).domain(data.data.data.map(function(d,i) {return i; }));
-    module.d3config.x = d3.scaleLinear().domain([0, d3.max(data.data.data, function(d){return d.data[0];})]);
+    module.d3config.x = d3.scaleLinear().domain([0, maxValue]);
     
     var barsNumberHeigth = module.d3config.barsNumber._groups[0][0].getBBox().width;
     // var barsTextHeigth = module.d3config.barsText._groups[0][0].getBBox().height;
@@ -62,7 +63,7 @@ SVIFT.vis.barchart = (function (data, container) {
     var vizTranslate = barsNumberHeigth + textPadding;
 
 
-    var windowHeight = module.vizSize.height + 15;
+    var windowHeight = module.vizSize.height + 20;
     var width = module.vizSize.width; //-vizTranslate;
 
     module.d3config.y.range([0,windowHeight]);
@@ -78,29 +79,34 @@ SVIFT.vis.barchart = (function (data, container) {
       .attr("height", module.d3config.y.bandwidth())
       .attr("opacity", 0);
 
-    // module.vizContainer.append('rect')
-    //   .attr('width', module.vizSize.width)
-    //   .attr('height', module.vizSize.height)
-
-
-    // module.d3config.barsText
-    //   .attr("x", function(d,i){ return module.d3config.x(i) + (module.d3config.y.bandwidth() / 2) })
-    //   .attr("y",function(d){ return this.getBBox().height + width + textPadding})
-    //   .attr("font-size", "1em")
-    //   // .attr("opacity", 0);
-
-    // module.d3config.barsNumber
-    //   .attr("x", function(d,i){ return module.d3config.x(i) + (module.d3config.y.bandwidth() / 2) })
-    //   .attr("y", function(d){ return module.d3config.y(d.data[0]) - textPadding }) 
-    //   .attr("font-size", "1em")
-    //   // .attr("opacity", 0);
-
-
     data.data.data.forEach(function(d,i){
       // module.d3config.yInterpolate[i] = d3.interpolate(width, module.d3config.x(d.data[0]));
       module.d3config.xInterpolate[i] = d3.interpolate(0, width-module.d3config.x(d.data[0]));
       // module.d3config.oInterpolate[i] = d3.interpolate(0, 1);
     });
+
+
+    var maxXsize = d3.interpolate(0, width-module.d3config.x(maxValue))(1);
+
+    module.d3config.barsText
+      .attr("x", function(d,i){ 
+        if(module.d3config.xInterpolate[i](1) <= maxXsize/2){
+          return module.d3config.xInterpolate[i](1) + 10; 
+        }else{
+          return module.d3config.xInterpolate[i](1) - 10; 
+        }
+      })
+      .attr("y",function(d,i){ return module.d3config.y(i) + (module.d3config.y.bandwidth() / 2)})
+      .attr("font-size", "1em")
+      .attr("text-anchor", function(d,i){ 
+        if(module.d3config.xInterpolate[i](1) <= maxXsize/2){
+          return 'start'; 
+        }else{
+          return 'end'; 
+        }
+      })
+      .style("opacity", 0);
+
 
     if(module.playHead == module.playTime){
         module.goTo(1);
@@ -131,9 +137,21 @@ SVIFT.vis.barchart = (function (data, container) {
 
   };
 
-  module.timeline = {
-    bars: {start:0, end:3000, func:module.barAnimation}
+
+
+  module.textAnimation = function(t){
+
+    if(t!==0){
+      module.d3config.barsText.style('opacity', 1 );
+    }
+
   };
+
+
+
+  // module.timeline = {
+  //   bars: {start:0, end:3000, func:module.barAnimation}
+  // };
 
   return module;
 
