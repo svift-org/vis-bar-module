@@ -24,8 +24,8 @@ SVIFT.vis.barchart = (function (data, container) {
       .style('opacity',0);
 
     module.d3config.barsText = module.d3config.barsContainer.append("text")
-      .text(function(d) { return d.label })
-      .attr('class', 'labelText') //bold
+      .text(function(d) { return d.label + " (" + d.data[0] + ")" })
+      .attr('class', 'labelText bold') //bold
       .style('opacity',1);
 
     module.d3config.barsNumber = module.d3config.barsContainer.append("text")
