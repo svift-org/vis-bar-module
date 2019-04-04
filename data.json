@@ -22,6 +22,9 @@
         [
           {"label":"A","data":[1]},
           {"label":"B","data":[2]},
+          {"label":"C","data":[3]},
+                    {"label":"A","data":[1]},
+          {"label":"B","data":[2]},
           {"label":"C","data":[3]}
 
         ]

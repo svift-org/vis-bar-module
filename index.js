@@ -117,7 +117,7 @@ SVIFT.vis.barchart = (function (data, container) {
           return true; 
         }
       })
-      .attr("y",function(d,i){ return module.d3config.y(i) + (module.d3config.y.bandwidth() / 2) + textHeight/2})
+      .attr("y",function(d,i){ return module.d3config.y(i) + (module.d3config.y.bandwidth() / 2) + textHeight/3})
       .attr("text-anchor", function(d,i){ 
         if(module.d3config.xInterpolate[i](1) <= maxXsize/2){
           return 'start'; 
@@ -150,7 +150,6 @@ SVIFT.vis.barchart = (function (data, container) {
 
 
       d3.select(module.d3config.bars._groups[0][i])
-        // .attr('y',      function(){ return module.d3config.yInterpolate[index](module.d3config.ease(t)); })
         .attr('width', function(){ return module.d3config.xInterpolate[i](module.d3config.ease(t)); })
 
     }
