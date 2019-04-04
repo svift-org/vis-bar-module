@@ -44,6 +44,7 @@ SVIFT.vis.barchart = (function (data, container) {
     module.d3config.barsText = module.d3config.barsContainer.append("text")
       .text(function(d) { return d.label + " (" + d.data[0] + ")" })
       .attr('class', 'labelText bold') //bold
+      .attr("font-size", "1em")
       .style('opacity',1);
 
     module.d3config.barsNumber = module.d3config.barsContainer.append("text")
@@ -66,7 +67,6 @@ SVIFT.vis.barchart = (function (data, container) {
     module.d3config.barsContainer.data(data.data.data).enter();
     module.d3config.bars.datum(function(d){return d;});
     module.d3config.barsText.datum(function(d){return d;}).text(function(d) { return d.label });
-    module.d3config.barsNumber.datum(function(d){return d;}).text(function(d) { return d.data[0] });
   };
 
   module.resize = function () {
@@ -74,12 +74,6 @@ SVIFT.vis.barchart = (function (data, container) {
     var maxValue = d3.max(data.data.data, function(d){return d.data[0];})
     module.d3config.y = d3.scaleBand().padding(0.1).domain(data.data.data.map(function(d,i) {return i; }));
     module.d3config.x = d3.scaleLinear().domain([0, maxValue]);
-    
-    var barsNumberHeigth = module.d3config.barsNumber._groups[0][0].getBBox().width;
-    // var barsTextHeigth = module.d3config.barsText._groups[0][0].getBBox().height;
-    var textPadding = 60;
-    var vizTranslate = barsNumberHeigth + textPadding;
-
 
     var windowHeight = module.vizSize.height + 20;
     var width = module.vizSize.width; //-vizTranslate;
@@ -106,6 +100,8 @@ SVIFT.vis.barchart = (function (data, container) {
 
     var maxXsize = d3.interpolate(0, width-module.d3config.x(maxValue))(1);
 
+    var textHeight = module.d3config.barsText._groups[0][0].getBoundingClientRect().height;
+
     module.d3config.barsText
       .attr("x", function(d,i){ 
         if(module.d3config.xInterpolate[i](1) <= maxXsize/2){
@@ -121,8 +117,7 @@ SVIFT.vis.barchart = (function (data, container) {
           return true; 
         }
       })
-      .attr("y",function(d,i){ return module.d3config.y(i) + (module.d3config.y.bandwidth() / 2)})
-      .attr("font-size", "1em")
+      .attr("y",function(d,i){ return module.d3config.y(i) + (module.d3config.y.bandwidth() / 2) + textHeight/2})
       .attr("text-anchor", function(d,i){ 
         if(module.d3config.xInterpolate[i](1) <= maxXsize/2){
           return 'start'; 
