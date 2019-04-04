@@ -96,6 +96,13 @@ SVIFT.vis.barchart = (function (data, container) {
           return module.d3config.xInterpolate[i](1) - 10; 
         }
       })
+      .classed('white',function(d,i){ 
+        if(module.d3config.xInterpolate[i](1) <= maxXsize/2){
+          return false; 
+        }else{
+          return true; 
+        }
+      })
       .attr("y",function(d,i){ return module.d3config.y(i) + (module.d3config.y.bandwidth() / 2)})
       .attr("font-size", "1em")
       .attr("text-anchor", function(d,i){ 
