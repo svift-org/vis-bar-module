@@ -2,32 +2,12 @@ SVIFT.vis.barchart = (function (data, container) {
  
   var module = SVIFT.vis.base(data, container);
  
-
-
-  //  var b1 = 4 / 11,
-  //     b2 = 6 / 11,
-  //     b3 = 8 / 11,
-  //     b4 = 3 / 4,
-  //     b5 = 9 / 11,
-  //     b6 = 10 / 11,
-  //     b7 = 15 / 16,
-  //     b8 = 21 / 22,
-  //     b9 = 63 / 64,
-  //     b0 = 1 / b1 / b1;
-
-  // function bounceOut(t) {
-  //   return (t = +t) < b1 ? b0 * t * t : t < b3 ? b0 * (t -= b2) * t + b4 : t < b6 ? b0 * (t -= b5) * t + b7 : b0 * (t -= b8) * t + b9;
-  // }
-
-
   module.d3config = {
     ease:d3.easeBounce, 
     xInterpolate:[],
     steps:data.data.data.length,
-    // animation:{
-    //   duration: 3000,
-    //   barPartPercent: .8
-    // }
+    showNumberLabels: data.data.showNumberLabels
+
   };
 
   module.setup = function () {
@@ -41,9 +21,16 @@ SVIFT.vis.barchart = (function (data, container) {
       .attr('class', 'visFill')
       .style('opacity',0);
 
+
     module.d3config.barsText = module.d3config.barsContainer.append("text")
-      .text(function(d) { return d.label + " (" + d.data[0] + ")" })
-      .attr('class', 'labelText bold') //bold
+      .text(function(d) { 
+        var numberText = "";
+        if(module.d3config.showNumberLabels){
+          numberText = " (" + d.data[0] + ")";
+        }
+        return d.label + numberText 
+      })
+      .attr('class', 'labelText') //bold
       .attr("font-size", "1em")
       .style('opacity',1);
 
@@ -79,7 +66,6 @@ SVIFT.vis.barchart = (function (data, container) {
     var width = module.vizSize.width; //-vizTranslate;
 
     module.d3config.y.range([0,windowHeight]);
-    // console.log(module.d3config.y.range(1))
     module.d3config.x.range([width,0]);
 
     module.d3config.barsContainer
@@ -92,9 +78,7 @@ SVIFT.vis.barchart = (function (data, container) {
       .attr("opacity", 0);
 
     data.data.data.forEach(function(d,i){
-      // module.d3config.yInterpolate[i] = d3.interpolate(width, module.d3config.x(d.data[0]));
       module.d3config.xInterpolate[i] = d3.interpolate(0, width-module.d3config.x(d.data[0]));
-      // module.d3config.oInterpolate[i] = d3.interpolate(0, 1);
     });
 
 
@@ -136,26 +120,17 @@ SVIFT.vis.barchart = (function (data, container) {
   };
 
 
-
-
   module.barAnimation = function(t){
 
-    // var interpolation = Math.round(module.d3config.interpolate(module.d3config.ease(t)));
-    // module.d3config.count
-    //   .text(interpolation)
-    //   .attr("opacity",1);
     module.d3config.bars.style('opacity', 1 );
 
     for (var i = 0; i < module.d3config.steps; i++) {
-
-
       d3.select(module.d3config.bars._groups[0][i])
         .attr('width', function(){ return module.d3config.xInterpolate[i](module.d3config.ease(t)); })
 
     }
 
   };
-
 
 
   module.textAnimation = function(t){
@@ -165,12 +140,6 @@ SVIFT.vis.barchart = (function (data, container) {
     }
 
   };
-
-
-
-  // module.timeline = {
-  //   bars: {start:0, end:3000, func:module.barAnimation}
-  // };
 
   return module;
 
