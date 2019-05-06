@@ -30,7 +30,7 @@ SVIFT.vis.barchart = (function (data, container) {
         }
         return d.label + numberText 
       })
-      .attr('class', 'labelText') //bold
+      .attr('class', 'labelText bold') //bold
       .attr("font-size", "1em")
       .style('opacity',1);
 
